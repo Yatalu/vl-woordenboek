@@ -39,6 +39,9 @@ final class AdminActionsRelationManager extends RelationManager
     {
         return [
             TextColumn::make('causer.name')
+                ->icon(Heroicon::OutlinedUserCircle)
+                ->iconColor('primary')
+                ->label('Uitgevoerd door')
         ];
     }
 }

@@ -37,6 +37,8 @@ final class CreateUser extends CreateRecord
         $expiresAt = now()->addDay();
 
         $this->record->update(['email_verified_at' => now()]);
+        $this->record->registerAdminAction(action: 'account:create', description: 'Heeft het gebruikersaccount aangemaakt');
+
         $this->record->sendWelcomeNotification($expiresAt);
     }
 }
