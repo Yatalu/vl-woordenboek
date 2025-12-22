@@ -1,63 +1,96 @@
+<?php
+/**
+ * LARAVEL ENVOY INFRASTRUCTURE GUIDE
+ * * This script automates deployment and maintenance for the 'vl-woordenboek' application.
+ * * PREREQUISITES:
+ * 1. Local: 'composer global require laravel/envoy'
+ * 2. Local: A '.env' file containing SSH_SERVER and SSH_USER.
+ * 3. Remote: SSH Key access and Composer/PHP installed.
+ * * EXECUTION:
+ * envoy run [task_name]
+ */
+?>
+
 @setup
+    /**
+     * LOCAL CONFIGURATION
+     * This block runs on the local machine to prepare the environment.
+     */
+    require __DIR__.'/vendor/autoload.php';
+    
+    // Load credentials from local .env to avoid hardcoding secrets
+    $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+    $dotenv->load();
 
-$branch = 'develop';
-$server = 'chimpy.be -p 26';
-$applicationDir = 'domains/vl-woordenboek';
-$userAndServer = 'mg119947@'. $server;
+    // Configuration Variables
+    $branch = 'v2.x-dev';           // The target git branch for deployment
+    $server = env('SSH_SERVER');     // Remote server IP/Hostname
+    $user = env('SSH_USER');         // SSH Username
+    $applicationDir = 'vl-woordenboek'; // Target directory on the remote server
+    
+    $userAndServer = $user .'@'. $server;
 
-function logMessage($message) {
-return "echo '\033[32m" .$message. "\033[0m';\n";
-}
+    /**
+     * Helper: Returns a Bash echo command with green ANSI color coding
+     */
+    function logMessage($message) {
+        return "echo '\033[32m" .$message. "\033[0m';\n";
+    }
 @endsetup
 
-@servers(['local' => '127.0.0.1', 'remote' => $userAndServer])
+@servers(['remote' => $userAndServer])
 
-@task('deploy', ['on' => 'remote'])
-cd {{ $applicationDir }}
-{{ logMessage("INFO  Put the application in maintenance mode...") }}
-php artisan down --refresh=30 --with-secret
-{{ logMessage("INFO  Preventive MySQL back-up before the deployment ...") }}
-php artisan backup:run
-{{ logMessage("INFO  Pull the latest changes from the repository...") }}
-git add .
-git stash
-git pull origin {{ $branch }}
-{{ logMessage("INFO  Install the latest dependencies...") }}
-composer update --optimize-autoloader
-{{ logMessage("INFO  Run the migrations...") }}
-php artisan migrate --force
-{{ logMessage('INFO  Run the essential seeders') }}
-php artisan db:seed --class=ShieldSeeder
-{{ logMessage("INFO  Optimize the application...") }}
-php artisan optimize
-{{ logMessage("INFO  Bring the application back online") }}
-php artisan up
+/**
+ * TASK: composer:update
+ * Use case: Manually refreshing dependencies on the remote server.
+ * Warning: This will modify the composer.lock file if run in a dev environment.
+ */
+@task('composer:update')
+    echo 'Update dependencies';
+    composer update
 @endtask
 
-@task('backup:database', ['on' => 'remote'])
-{{ logMessage("Backing up database...") }}
-{{ logMessage("-----") }}
-
-cd {{ $applicationDir }}
-php artisan backup:run
-
-{{ logMessage("-----") }}
+/**
+ * TASK: composer:audit
+ * Use case: Security & Maintenance checks.
+ * 
+ * Actions: 
+ * 1. Scans installed packages for known vulnerabilities.
+ * 2. Lists packages that have newer versions available.
+ */
+@task('composer:audit')
+    cd {{ $applicationDir }}
+    echo "--- Running Composer Audit ---"
+    composer audit
+    echo "--- Checking for Outdated Packages ---"
+    composer outdated --direct
 @endtask
 
-@task('maintenance:start', ['on' => 'remote'])
-{{ logMessage("Putting the application in maintenance mode...") }}
-{{ logMessage("-----") }}
+/**
+ * TASK: deploy:only-code
+ * Use case: Standard deployment of the v2.x-dev branch.
+ *
+ * INFRASTRUCTURE IMPACT:
+ * 1. Maintenance Mode: The site will show a maintenance page to users.
+ * 2. Git Pull: Updates code from the remote repository.
+ * 3. Optimization: Rebuilds Laravel's internal config/route caches.
+ */
+@task('deploy:only-code')
+    {{ logMessage("Starting Deployment...") }}
+    cd {{ $applicationDir }}
 
-cd {{ $applicationDir }}
-php artisan down --refresh=30 --with-secret
-{{ logMessage("-----") }}
+    {{ logMessage("Fetching latest code from $branch...") }}
+    git pull origin {{ $branch }}
+
+    {{ logMessage("Entering Maintenance Mode...") }}
+    php artisan down --render="errors.maintenance"
+
+    {{ logMessage("Synchronizing dependencies...") }}
+    composer update
+
+    {{ logMessage("Rebuilding Application Cache...") }}
+    php artisan optimize
+
+    {{ logMessage("Application is now LIVE.") }}
+    php artisan up
 @endtask
-
-@task('maintenance:stop', ['on' => 'remote'])
-{{ logMessage("Bringing the application out of maintenance mode...") }}
-{{ logMessage("-----") }}
-cd {{ $applicationDir }}
-php artisan up
-{{ logMessage("-----") }}
-@endtask
-
