@@ -7,6 +7,19 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @property
+ * @property 
+ * @property 
+ * @property 
+ * @property
+ * @property
+ * @property
+ * @property 
+ * @property
+ * 
+ * @package App\Models 
+ */
 final class AdminActionLog extends Model
 {
     /**
