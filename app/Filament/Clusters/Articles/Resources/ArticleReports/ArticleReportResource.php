@@ -191,7 +191,7 @@ final class ArticleReportResource extends Resource
      */
     public static function getNavigationBadge(): ?string
     {
-        return Cache::flexible('report_count', [10, 60], fn(): string => (string) self::$model::count());
+        return Cache::flexible('report_count', [10, 60], fn(): string => (string) toHumanReadableNumber(self::$model::count()));
     }
 
     /**

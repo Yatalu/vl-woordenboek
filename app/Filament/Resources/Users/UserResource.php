@@ -6,6 +6,7 @@ namespace App\Filament\Resources\Users;
 
 use App\Filament\Clusters\Articles\Resources\ArticleResource\RelationManagers\ReportsRelationManager;
 use App\Filament\Clusters\UserManagement\Resources\RoleResource\RelationManagers;
+use App\Filament\Clusters\UserManagement\Resources\UserResource\RelationManagers\AdminActionsRelationManager;
 use App\Filament\Clusters\UserManagement\Resources\UserResource\RelationManagers\SuggestionsRelationManager;
 use App\Filament\Clusters\UserManagement\UserManagementCluster;
 use App\Filament\Resources\Users\Schema as UserSchema;
@@ -157,6 +158,7 @@ final class UserResource extends Resource
         return [
             SuggestionsRelationManager::class,
             ReportsRelationManager::class,
+            AdminActionsRelationManager::class,
             RelationManagers\RolesRelationManager::class,
         ];
     }
