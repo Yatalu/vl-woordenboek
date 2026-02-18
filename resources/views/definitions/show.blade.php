@@ -116,99 +116,377 @@
 
     <div class="container-fluid py-5">
         <div class="row justify-content-center">
+            <div class="col-10">
+
+            </div>
+
+            <style>
+                /* =========================================
+   WORD TABS – LEXI STYLE
+========================================= */
+
+                .nav-tabs {
+                    border-bottom: 2px solid #e9ecef;
+                    gap: .5rem;
+                }
+
+                /* Reset Bootstrap default */
+                .nav-tabs .nav-link {
+                    border: none;
+                    border-radius: 10px 10px 0 0;
+                    padding: .75rem 1.25rem;
+                    font-weight: 600;
+                    color: #6c757d;
+                    background: transparent;
+                    position: relative;
+                    transition: all .2s ease-in-out;
+                }
+
+                /* Hover state */
+                .nav-tabs .nav-link:hover {
+                    color: var(--lexi-green, #198754);
+                    background: rgba(25, 135, 84, 0.05);
+                }
+
+                /* Active state */
+                .nav-tabs .nav-link.active {
+                    color: var(--lexi-green, #198754);
+                    background: #fff;
+                }
+
+                /* Animated underline */
+                .nav-tabs .nav-link::after {
+                    content: "";
+                    position: absolute;
+                    left: 0%;
+                    bottom: -2px;
+                    width: 100%;
+                    height: 3px;
+                    background: var(--lexi-green, #198754);
+                    transform: scaleX(0);
+                    transform-origin: center;
+                    transition: transform .25s ease;
+                    border-radius: 10px;
+                }
+
+                .nav-tabs .nav-link.active::after {
+                    transform: scaleX(1);
+                }
+
+                /* =========================================
+                   TAB CONTENT
+                ========================================= */
+
+                .tab-content {
+                    background: #ffffff;
+                    padding: 2rem;
+                    border-radius: 0 0 12px 12px;
+                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+                }
+
+                /* Smooth fade */
+                .tab-pane {
+                    animation: fadeIn .25s ease-in-out;
+                }
+
+                @keyframes fadeIn {
+                    from { opacity: 0; transform: translateY(4px); }
+                    to { opacity: 1; transform: translateY(0); }
+                }
+
+                /* =========================================
+                   RELATED CHIPS UPGRADE
+                ========================================= */
+
+                .related-chip {
+                    display: inline-flex;
+                    align-items: center;
+                    padding: .45rem .75rem;
+                    margin: .25rem;
+                    background: #f8f9fa;
+                    border-radius: 999px;
+                    font-size: .85rem;
+                    font-weight: 500;
+                    color: #212529;
+                    text-decoration: none;
+                    transition: all .2s ease;
+                }
+
+                .related-chip:hover {
+                    background: var(--lexi-green, #198754);
+                    color: #fff;
+                    transform: translateY(-2px);
+                    box-shadow: 0 4px 10px rgba(25, 135, 84, 0.25);
+                }
+
+                /* =========================================
+                   SOURCES LIST CLEANUP
+                ========================================= */
+
+                .source-item {
+                    display: flex;
+                    align-items: flex-start;
+                    gap: 1rem;
+                    padding: 1rem;
+                    border-radius: 12px;
+                    background: #f8f9fa;
+                    margin-bottom: .75rem;
+                    transition: all .2s ease;
+                }
+
+                .source-item:hover {
+                    background: #ffffff;
+                    box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+                }
+
+                .source-icon {
+                    color: var(--lexi-green, #198754);
+                    margin-top: 3px;
+                }
+
+                /* =========================================
+                   CONTRIBUTOR BOX
+                ========================================= */
+
+                .contributor-box {
+                    display: flex;
+                    align-items: center;
+                    gap: 1rem;
+                    padding: 1.25rem;
+                    border-radius: 14px;
+                    border: 1px solid #f1f1f1;
+                    transition: all .2s ease;
+                }
+
+                .contributor-box:hover {
+                    box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+                    transform: translateY(-2px);
+                }
+
+                /* =========================================
+                   MOBILE IMPROVEMENTS
+                ========================================= */
+
+                @media (max-width: 768px) {
+
+                    .nav-tabs {
+                        overflow-x: auto;
+                        flex-wrap: nowrap;
+                        scrollbar-width: none;
+                    }
+
+                    .nav-tabs::-webkit-scrollbar {
+                        display: none;
+                    }
+
+                    .nav-tabs .nav-link {
+                        white-space: nowrap;
+                        font-size: .9rem;
+                    }
+
+                    .tab-content {
+                        padding: 1.25rem;
+                    }
+                }
+
+            </style>
+
             <div class="col-lg-7 pe-lg-5">
-                <section class="mb-5">
-                    <h5 class="fw-bold mb-3 text-success">Definitie</h5>
-                    <p class="mb-3 text-muted"><span class="text-dark fw-bold me-2">Status:</span>{{ $word->status->getLabel() }}</p>
 
-                    <div class="d-flex">
-                        @if ($word->image_url)
-                            <div class="flex-shrink-0 d-sm-none d-md-block me-3">
-                                <a href="{{ $word->image_url }}">
-                                    <img
-                                        src="{{ $word->image_url }}"
-                                        alt="{{ $word->image_alt ?? $word->word }}"
-                                        class="rounded border-0 shadow-sm"
-                                        style="height: 200px; width: 200px;"
-                                    />
-                                </a>
-                            </div>
-                        @endif
+                {{-- Tabs Navigation --}}
+                <ul class="nav nav-tabs" id="wordTab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active"
+                                id="definition-tab"
+                                data-bs-toggle="tab"
+                                data-bs-target="#definition"
+                                type="button"
+                                role="tab">
+                            Definitie
+                        </button>
+                    </li>
 
-                        <div class="flex-grow-1">
-                            <div class="text-muted">
-                                <div class="markdown-text lh-base text-dark">
-                                    {!! str($word->description)->markdown()->sanitizeHtml() !!}
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link"
+                                id="examples-tab"
+                                data-bs-toggle="tab"
+                                data-bs-target="#examples"
+                                type="button"
+                                role="tab">
+                            Voorbeelden
+                        </button>
+                    </li>
+
+                    @if ($word->related()->exists())
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link"
+                                    id="related-tab"
+                                    data-bs-toggle="tab"
+                                    data-bs-target="#related"
+                                    type="button"
+                                    role="tab">
+                                Gerelateerd
+                            </button>
+                        </li>
+                    @endif
+
+                    @if($word->sources && $word->sources->count() > 0)
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link"
+                                    id="sources-tab"
+                                    data-bs-toggle="tab"
+                                    data-bs-target="#sources"
+                                    type="button"
+                                    role="tab">
+                                Bronnen
+                            </button>
+                        </li>
+                    @endif
+                </ul>
+
+                {{-- Tabs Content --}}
+                <div class="tab-content" id="wordTabContent">
+
+                    {{-- Definitie --}}
+                    <div class="tab-pane fade show active"
+                         id="definition"
+                         role="tabpanel">
+
+                        <section>
+                            <p class="mb-3 text-muted">
+                                <span class="text-dark fw-bold me-2">Status:</span>
+                                {{ $word->status->getLabel() }}
+                            </p>
+
+                            <div class="d-flex">
+                                @if ($word->image_url)
+                                    <div class="flex-shrink-0 d-sm-none d-md-block me-3">
+                                        <a href="{{ $word->image_url }}">
+                                            <img
+                                                src="{{ $word->image_url }}"
+                                                alt="{{ $word->image_alt ?? $word->word }}"
+                                                class="rounded shadow-sm"
+                                                style="height: 200px; width: 200px;"
+                                            />
+                                        </a>
+                                    </div>
+                                @endif
+
+                                <div class="flex-grow-1">
+                                    <div class="markdown-text lh-base text-dark">
+                                        {!! str($word->description)->markdown()->sanitizeHtml() !!}
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        </section>
                     </div>
-                </section>
 
-                <section class="mb-5">
-                    <h5 class="fw-bold mb-3 color-green">Voorbeelden</h5>
-                    <div class="markdown-text">
-                        {!! str($word->example)->markdown()->sanitizeHtml() !!}
+                    {{-- Voorbeelden --}}
+                    <div class="tab-pane fade"
+                         id="examples"
+                         role="tabpanel">
+
+                        <section>
+                            <div class="markdown-text">
+                                {!! str($word->example)->markdown()->sanitizeHtml() !!}
+                            </div>
+                        </section>
                     </div>
-                </section>
 
-                @if ($word->related()->exists())
-                    <section class="mb-5">
-                        <h5 class="fw-bold color-green mb-3">Gerelateerde Woorden</h5>
-                        <div class="d-flex flex-wrap">
-                            @foreach($word->related as $related)
-                                <a href="{{ route('word-information.show', $related) }}" class="related-chip shadow-sm">
-                                    <x-heroicon-o-document-text class="icon color-green me-1"/> {{ $related->word }}
-                                </a>
-                            @endforeach
-                        </div>
-                    </section>
-                @endif
+                    {{-- Gerelateerd --}}
+                    @if ($word->related()->exists())
+                        <div class="tab-pane fade"
+                             id="related"
+                             role="tabpanel">
 
-                @if($word->sources && $word->sources->count() > 0)
-                    <section class="mb-5">
-                        <h5 class="fw-bold mb-3 d-flex align-items-center color-green">Bronnen & Referenties</h5>
-                        <div class="sources-list">
-                            @foreach($word->sources as $source)
-                                <div class="source-item shadow-sm">
-                                    <div class="source-icon">
-                                        <x-heroicon-s-book-open style="width: 1.2rem;"/>
-                                    </div>
-                                    <div class="flex-grow-1">
-                                        <span class="source-link fw-semibold">{{ $source->referenceWork->name }}</span>
-                                        @if($source->notation)
-                                            <p class="mb-0 small text-muted mt-1">{{ $source->notation }}</p>
-                                        @endif
-                                    </div>
+                            <section>
+                                <h5 class="fw-bold color-green mb-3">Gerelateerde woorden</h5>
+
+                                <div class="d-flex flex-wrap">
+                                    @foreach($word->related as $related)
+                                        <a href="{{ route('word-information.show', $related) }}"
+                                           class="related-chip shadow-sm">
+                                            <x-heroicon-o-document-text class="icon color-green me-1"/>
+                                            {{ $related->word }}
+                                        </a>
+                                    @endforeach
                                 </div>
-                            @endforeach
+                            </section>
                         </div>
-                    </section>
-                @endif
+                    @endif
 
-                <section class="border-top pt-4">
+                    {{-- Bronnen --}}
+                    @if($word->sources && $word->sources->count() > 0)
+                        <div class="tab-pane fade"
+                             id="sources"
+                             role="tabpanel">
+
+                            <section>
+                                <h5 class="fw-bold mb-3 color-green">
+                                    Bronnen & Referenties
+                                </h5>
+
+                                <div class="sources-list">
+                                    @foreach($word->sources as $source)
+                                        <div class="source-item shadow-sm">
+                                            <div class="source-icon">
+                                                <x-heroicon-s-book-open style="width: 1.2rem;"/>
+                                            </div>
+                                            <div class="flex-grow-1">
+                                    <span class="fw-semibold">
+                                        {{ $source->referenceWork->name }}
+                                    </span>
+
+                                                @if($source->notation)
+                                                    <p class="mb-0 small text-muted mt-1">
+                                                        {{ $source->notation }}
+                                                    </p>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </section>
+                        </div>
+                    @endif
+
+                </div>
+
+                {{-- Contributor info (blijft onder tabs) --}}
+                <section class="border-top pt-4 mt-4">
                     <div class="contributor-box bg-white shadow-sm">
-                        <div class="bg-white rounded-circle d-flex align-items-center justify-content-center border" style="width: 45px; height: 45px;">
+                        <div class="bg-white rounded-circle d-flex align-items-center justify-content-center border"
+                             style="width: 45px; height: 45px;">
                             <x-heroicon-o-user style="width: 1.5rem;" class="text-muted" />
                         </div>
                         <div>
                             <p class="mb-1 small text-muted">
                                 Toegevoegd door
                                 @if ($word->author()->exists())
-                                    <a href="{{ route('account:public', $word->author) }}" class="fw-bold text-dark">{{ $word->author->name ?? $word->contributor_name }}</a>
+                                    <a href="{{ route('account:public', $word->author) }}"
+                                       class="fw-bold text-dark">
+                                        {{ $word->author->name ?? $word->contributor_name }}
+                                    </a>
                                 @else
-                                    <span class="fw-bold text-dark">{{ $word->contributor_name }}</span>
+                                    <span class="fw-bold text-dark">
+                            {{ $word->contributor_name }}
+                        </span>
                                 @endif
                             </p>
-                            <p class="mb-0 extra-small text-muted" style="font-size: 0.75rem;">
-                                Gepubliceerd op {{ optional($word->published_at)->format('d M Y') ?? $word->created_at->format('d M Y') }}
+
+                            <p class="mb-0 small text-muted">
+                                Gepubliceerd op
+                                {{ optional($word->published_at)->format('d M Y') ?? $word->created_at->format('d M Y') }}
                                 <span class="vr mx-2"></span>
-                                Laatst bijgewerkt op {{ $word->updated_at->format('d M Y') }}
+                                Laatst bijgewerkt op
+                                {{ $word->updated_at->format('d M Y') }}
                             </p>
                         </div>
                     </div>
                 </section>
+
             </div>
+
 
             <aside class="col-lg-3">
                 {{-- Community Stats --}}
