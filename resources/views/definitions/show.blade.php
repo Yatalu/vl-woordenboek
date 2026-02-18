@@ -422,13 +422,9 @@
                              role="tabpanel">
 
                             <section>
-                                <h5 class="fw-bold mb-3 color-green">
-                                    Bronnen & Referenties
-                                </h5>
-
                                 <div class="sources-list">
                                     @foreach($word->sources as $source)
-                                        <div class="source-item shadow-sm">
+                                        <div class="source-item shadow-sm @if($loop->last) mb-0 @endif">
                                             <div class="source-icon">
                                                 <x-heroicon-s-book-open style="width: 1.2rem;"/>
                                             </div>
