@@ -135,7 +135,7 @@
                         <div>
                             <div class="text-muted small mb-1"><i class="bi bi-toggles me-1"></i>Status</div>
                                 <div class="d-flex gap-1 flex-wrap">
-                                    <span class="badge text-bg-success">{{ $word->status->getLabel() }}</span>
+                                    <span class="badge text-bg-success rounded-pill">{{ $word->status->getLabel() }}</span>
                                 </div>
                             </div>
                         
